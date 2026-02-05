@@ -1,0 +1,990 @@
+/* ===== CSS Variables ===== */
+@font-face {
+    font-family: 'ONE Mobile POP';
+    src: url('../assets/Ally title_font/ONE Mobile POP OTF.otf') format('opentype');
+}
+
+:root {
+    --primary-color: #FF6B6B;
+    --secondary-color: #4ECDC4;
+    --accent-color: #FFE66D;
+    --success-color: #2ECC71;
+    --fail-color: #E74C3C;
+    --bg-dark: #2C3E50;
+    --bg-light: #ECF0F1;
+    --text-dark: #2C3E50;
+    --text-light: #FFFFFF;
+
+    --tv-height: 50vh;
+    --phone-height: 50vh;
+
+    --timer-size: 60px;
+    --card-size: 120px;
+    --a-button-size: 80px;
+}
+
+/* ===== Reset & Base ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'ONE Mobile POP', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #FFFFFF;
+    text-shadow: -0.5px -0.5px 4px rgba(0, 0, 0, 0.25);
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* ===== TV Frame (Top) ===== */
+#tv-frame {
+    flex: 1;
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    /* Center horizontally */
+    position: relative;
+    background: #1a1a1a;
+    border: 20px solid #2c3e50;
+    border-radius: 20px;
+    box-shadow:
+        inset 0 0 50px rgba(0, 0, 0, 0.8),
+        0 20px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    pointer-events: none;
+    /* Disable all clicks on TV */
+}
+
+#tv-frame::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    z-index: 20;
+}
+
+.tv-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#tv-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* TV Screens */
+.tv-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 10;
+}
+
+.tv-screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TV Home Screen */
+#tv-home-screen {
+    background: url('../assets/Ally_UI/bg_home.png') no-repeat center center;
+    background-size: cover;
+}
+
+.game-card-mirror {
+    width: var(--card-size);
+    height: var(--card-size);
+    background: transparent;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.15),
+        0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: cardFloat 3s ease-in-out infinite;
+    overflow: hidden;
+}
+
+/* TV Game Screen */
+#tv-game-screen {
+    background: transparent;
+}
+
+#tv-game-title-bar {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 50px;
+    background: none !important;
+    /* Remove background image */
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: top center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    pointer-events: none;
+}
+
+#tv-game-title-text {
+    color: #6E505A;
+    /* Changed from white */
+    font-family: 'ONE Mobile POP', sans-serif;
+    font-size: 25px;
+    /* Increased by 25% (20px -> 25px) */
+    position: relative;
+    top: 5px;
+    /* Adjusted position */
+    /* Lift text to visual center */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    /* Enhanced shadow */
+}
+
+/* TV Result Screen */
+#tv-result-screen {
+    background: url('../assets/Ally_UI/bg_home.png') no-repeat center center;
+    background-size: cover;
+    position: absolute;
+    /* Ensure relative positioning context */
+}
+
+#tv-result-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* Dim overlay */
+    z-index: 1;
+}
+
+.tv-result-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    /* Content above dim */
+}
+
+.tv-result-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tv-result-icon {
+    font-size: 80px;
+}
+
+/* TV Timer (mirrored) */
+.timer-container-mirror {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 70px;
+    height: 100px;
+    z-index: 100;
+    display: none;
+}
+
+#tv-timer-image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    z-index: 10;
+}
+
+#tv-timer-progress-svg {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+    width: 70px;
+    height: 70px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+#tv-timer-progress-circle {
+    fill: none;
+    stroke-width: 15;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+#tv-timer-text {
+    position: absolute;
+    bottom: 47px;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    font-size: 26px;
+    font-weight: bold;
+    font-family: 'ONE Mobile POP', sans-serif;
+    pointer-events: none;
+    z-index: 6;
+}
+
+/* ===== Phone Frame (Bottom) ===== */
+#phone-frame {
+    flex: 0.8;
+    width: 720px;
+    /* Wider to fit content like a tablet/landscape phone */
+    max-width: 100%;
+    margin: 0 auto;
+    /* Center horizontally */
+    position: relative;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border: 15px solid #111;
+    border-radius: 40px;
+    box-shadow:
+        inset 0 0 20px rgba(0, 0, 0, 0.5),
+        0 20px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+#phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #111;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 1000;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    /* Don't block clicks */
+}
+
+/* ===== Screens ===== */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 10;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+    /* Enable clicks on active screens */
+}
+
+/* ===== Timer ===== */
+#timer-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 70px;
+    height: 100px;
+    /* Adjusted containment */
+    z-index: 100;
+    display: none;
+}
+
+#timer-image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55px;
+    /* Enlarged image */
+    height: 55px;
+    object-fit: contain;
+    z-index: 10;
+    /* Ensures image is fully visible on top */
+}
+
+#timer-progress-svg {
+    position: absolute;
+    bottom: 12px;
+    /* Lifted up */
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+    width: 70px;
+    /* Enlarged gauge */
+    height: 70px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+#timer-progress-circle {
+    fill: none;
+    stroke-width: 15;
+    /* Thicker stroke */
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+#timer-text {
+    position: absolute;
+    bottom: 47px;
+    /* Adjusted for larger gauge */
+    left: 50%;
+    transform: translate(-50%, 50%);
+    font-size: 26px;
+    /* Larger text */
+    font-weight: bold;
+    font-family: 'ONE Mobile POP', sans-serif;
+    pointer-events: none;
+    z-index: 6;
+}
+
+/* ===== Home Screen ===== */
+#home-screen {
+    background: url('../assets/Ally_UI/bg_home.png') no-repeat center center;
+    background-size: cover;
+}
+
+.game-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 30px;
+}
+
+.card-row {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.card-row.center {
+    justify-content: center;
+}
+
+.game-card {
+    width: var(--card-size);
+    height: var(--card-size);
+    background: transparent;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.15),
+        0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: cardFloat 3s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.game-card:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.game-card:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.card-row:nth-child(2) .game-card:nth-child(1) {
+    animation-delay: 1s;
+}
+
+.card-row:nth-child(2) .game-card:nth-child(2) {
+    animation-delay: 1.5s;
+}
+
+.card-row:nth-child(3) .game-card {
+    animation-delay: 2s;
+}
+
+@keyframes cardFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.game-card:active {
+    transform: scale(0.95);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card-icon {
+    font-size: 60px;
+}
+
+/* A Button Hint */
+.a-button-hint {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.a-button-hint .a-button {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
+}
+
+.finger-animation {
+    font-size: 24px;
+    animation: fingerTap 1s ease-in-out infinite;
+}
+
+@keyframes fingerTap {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* ===== Game Screen ===== */
+#game-screen {
+    background: transparent;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== Result Screen ===== */
+#result-screen {
+    background: url('../assets/Ally_UI/bg_home.png') no-repeat center center;
+    background-size: cover;
+    position: absolute;
+}
+
+#result-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* Dim overlay */
+    z-index: 1;
+}
+
+.result-icon {
+    font-size: 80px;
+    margin-bottom: 30px;
+    animation: resultPop 0.5s ease-out;
+    position: relative;
+    z-index: 2;
+    /* Content above dim */
+}
+
+@keyframes resultPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.result-icon.success {
+    animation: successStar 1s ease-in-out infinite;
+}
+
+@keyframes successStar {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    75% {
+        transform: scale(1.1) rotate(-5deg);
+    }
+}
+
+.result-icon.fail {
+    animation: failShake 0.5s ease-in-out;
+}
+
+@keyframes failShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+.result-buttons {
+    display: flex;
+    gap: 40px;
+    position: relative;
+    z-index: 2;
+    /* Content above dim */
+}
+
+.result-btn {
+    width: 100px;
+    height: 100px;
+    border: none;
+    background: transparent;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.result-btn-home {
+    background-image: url('../assets/Ally_UI/button_home.png');
+}
+
+.result-btn-retry {
+    background-image: url('../assets/Ally_UI/button_replay.png');
+}
+
+.result-btn:active {
+    transform: scale(0.95);
+}
+
+/* Phone frame touch feedback */
+#phone-frame.pressed {
+    background: linear-gradient(180deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* ===== Card Transition Animation ===== */
+
+/* Dim background overlay */
+.card-transition-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 0;
+    z-index: 999;
+    opacity: 0;
+    animation: dimFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes dimFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Card center and spin animation */
+.game-card.card-animating {
+    position: fixed;
+    z-index: 1001;
+    animation: cardCenterSpin 1.2s ease-in-out forwards;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes cardCenterSpin {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+
+    30% {
+        transform: translate(var(--target-x), var(--target-y)) rotate(180deg) scale(1.3);
+    }
+
+    60% {
+        transform: translate(var(--target-x), var(--target-y)) rotate(360deg) scale(1.3);
+    }
+
+    100% {
+        transform: translate(var(--target-x), var(--target-y)) rotate(360deg) scale(1.5);
+    }
+}
+
+/* Star particles */
+.star-particle {
+    position: fixed;
+    font-size: 24px;
+    z-index: 1000;
+    pointer-events: none;
+    animation: starFloat 1.5s ease-out forwards;
+}
+
+@keyframes starFloat {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(0);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(-100px) rotate(180deg) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-200px) rotate(360deg) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) rotate(540deg) scale(0.5);
+    }
+}
+
+/* Legacy support - keeping old animation for compatibility */
+.game-card.expanding {
+    position: fixed;
+    z-index: 1000;
+    animation: cardExpand 0.5s ease-in-out forwards;
+}
+
+@keyframes cardExpand {
+    0% {
+        border-radius: 20px;
+    }
+
+    100% {
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        border-radius: 0;
+    }
+}
+
+/* ===== Game Specific Styles ===== */
+
+/* Game 1: Nose */
+.game1-face {
+    font-size: 120px;
+    position: relative;
+}
+
+.game1-snot {
+    position: absolute;
+    font-size: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: snotDrip 1.5s linear forwards;
+}
+
+@keyframes snotDrip {
+    0% {
+        top: 40%;
+        opacity: 1;
+    }
+
+    100% {
+        top: 70%;
+        opacity: 1;
+    }
+}
+
+.game1-tissue {
+    position: absolute;
+    font-size: 40px;
+    animation: tissuePop 0.3s ease-out forwards;
+}
+
+@keyframes tissuePop {
+    0% {
+        transform: scale(0) rotate(-45deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Game 2: Candle */
+.game2-cake {
+    font-size: 100px;
+    position: relative;
+}
+
+.game2-flame {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    animation: flameFlicker 0.2s ease-in-out infinite alternate;
+}
+
+@keyframes flameFlicker {
+    0% {
+        transform: translateX(-50%) scale(1) rotate(-5deg);
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1.1) rotate(5deg);
+    }
+}
+
+.game2-wind {
+    font-size: 30px;
+    animation: windBlow 0.3s ease-out infinite;
+}
+
+@keyframes windBlow {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+}
+
+/* Game 3: Photo */
+.game3-people {
+    display: flex;
+    gap: 10px;
+    font-size: 60px;
+}
+
+.game3-person {
+    transition: all 0.1s ease;
+}
+
+.game3-flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    animation: cameraFlash 0.3s ease-out forwards;
+    z-index: 200;
+}
+
+@keyframes cameraFlash {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Game 4: Dog */
+.game4-scene {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.game4-dog {
+    font-size: 80px;
+    transition: transform 0.2s ease;
+}
+
+.game4-shoe {
+    font-size: 60px;
+}
+
+.game4-drool {
+    font-size: 20px;
+    animation: droolDrip 0.5s ease-in-out infinite;
+}
+
+@keyframes droolDrip {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(5px);
+    }
+}
+
+/* Game 5: Coin */
+.game5-coin {
+    font-size: 50px;
+    position: absolute;
+    animation: coinFall 2s linear forwards;
+}
+
+@keyframes coinFall {
+    0% {
+        top: 0;
+    }
+
+    100% {
+        top: 80%;
+    }
+}
+
+.game5-hand {
+    font-size: 60px;
+    position: absolute;
+    bottom: 10%;
+    animation: handMove 1s ease-in-out infinite alternate;
+}
+
+@keyframes handMove {
+    0% {
+        left: 20%;
+    }
+
+    100% {
+        left: 60%;
+    }
+}
+
+.game5-hand.stopped {
+    animation: none;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    :root {
+        --timer-size: 50px;
+        --card-size: 15vw;
+        /* Fit 5 in a row: 15*5=75% + gaps */
+        --a-button-size: 70px;
+    }
+
+    .card-icon {
+        font-size: 8vw;
+    }
+
+    .game-cards {
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .card-row {
+        gap: 10px;
+    }
+
+    #timer-text {
+        font-size: 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    :root {
+        --timer-size: 80px;
+        --card-size: 100px;
+        --a-button-size: 100px;
+    }
+
+    .card-icon {
+        font-size: 50px;
+    }
+
+    .game-cards {
+        gap: 25px;
+    }
+
+    .card-row {
+        gap: 30px;
+    }
+}

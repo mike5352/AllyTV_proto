@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AllyTV Mini Game</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- TV Frame (Top - Mirrored View, Non-interactive) -->
+        <div id="tv-frame">
+            <div class="tv-content">
+                <canvas id="tv-canvas"></canvas>
+
+                <!-- TV Timer (mirrored) -->
+                <div id="tv-timer-container" class="timer-container-mirror">
+                    <img id="tv-timer-image" src="" alt="timer" />
+                    <svg id="tv-timer-progress-svg" viewBox="0 0 100 100">
+                        <circle id="tv-timer-progress-circle" cx="50" cy="50" r="32" />
+                    </svg>
+                    <span id="tv-timer-text">5</span>
+                </div>
+
+                <!-- TV Home Screen (mirrored) -->
+                <div id="tv-home-screen" class="tv-screen active">
+                    <div class="game-cards">
+                        <div class="card-row">
+                            <div class="game-card-mirror"
+                                style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
+                            <div class="game-card-mirror"
+                                style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
+                            <div class="game-card-mirror"
+                                style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                        </div>
+                        <div class="card-row">
+                            <div class="game-card-mirror"
+                                style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
+                            <div class="game-card-mirror"
+                                style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TV Game Screen (mirrored via canvas) -->
+                <div id="tv-game-screen" class="tv-screen">
+                    <div id="tv-game-title-bar">
+                        <span id="tv-game-title-text"></span>
+                    </div>
+                </div>
+
+                <!-- TV Result Screen (mirrored from phone) -->
+                <div id="tv-result-screen" class="tv-screen">
+                    <div class="tv-result-content">
+                        <div class="tv-result-icon" id="tv-result-icon"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Frame (Bottom - Interactive) -->
+        <div id="phone-frame">
+            <canvas id="game-canvas"></canvas>
+
+            <!-- Timer (Top Right) -->
+            <div id="timer-container">
+                <img id="timer-image" src="" alt="timer" />
+                <svg id="timer-progress-svg" viewBox="0 0 100 100">
+                    <circle id="timer-progress-circle" cx="50" cy="50" r="32" />
+                </svg>
+                <span id="timer-text">5</span>
+            </div>
+
+            <!-- Home Screen -->
+            <div id="home-screen" class="screen active">
+                <div class="game-cards">
+                    <div class="card-row">
+                        <div class="game-card" data-game="11"
+                            style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
+                        <div class="game-card" data-game="12"
+                            style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
+                        <div class="game-card" data-game="13"
+                            style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                    </div>
+                    <div class="card-row">
+                        <div class="game-card" data-game="14"
+                            style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
+                        <div class="game-card" data-game="15"
+                            style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="game-screen" class="screen">
+                <div id="game-container"></div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="screen">
+                <div class="result-icon" id="result-icon"></div>
+                <div class="result-buttons">
+                    <button class="result-btn result-btn-home" id="btn-home"></button>
+                    <button class="result-btn result-btn-retry" id="btn-retry"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="bgm-tick" loop preload="auto"></audio>
+    <audio id="sfx-success" preload="auto"></audio>
+    <audio id="sfx-fail" preload="auto"></audio>
+
+    <!-- Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/games/game1-nose.js"></script>
+    <script src="js/games/game2-candle.js"></script>
+    <script src="js/games/game3-photo.js"></script>
+    <script src="js/games/game4-dog.js"></script>
+    <script src="js/games/game5-coin.js"></script>
+    <script src="js/games/game6-swallow.js"></script>
+    <script src="js/games/game7-lightning.js"></script>
+    <script src="js/games/game8-hat.js"></script>
+    <script src="js/games/game9-sneeze.js"></script>
+    <script src="js/games/game10-door.js"></script>
+    <script src="js/games/Ally1_brushing teeth.js"></script>
+    <script src="js/games/Ally2_cake.js"></script>
+    <script src="js/games/Ally3_princess.js"></script>
+    <script src="js/games/Ally4_flower.js"></script>
+    <script src="js/games/Ally5_grape.js"></script>
+    <script src="js/homeScreen.js"></script>
+    <script src="js/resultScreen.js"></script>
+    <script src="js/game.js"></script>
+</body>
+
+</html>
