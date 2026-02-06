@@ -1,33 +1,42 @@
 /**
  * Game 12: 접시 위에 맛있는 빵 4개를 찾아라! (Find the plate with 4 items)
- * - Background: Ally2_bg.png
+ * - Phone Background: Ally2_cake_mob_plate_bg.png
+ * - TV Background: Ally2_cake_tv_plate_bg.png
  * - Assets: cake 1.png ~ cake 9.png
  * - Logic: 4 plates. One has 4 items (Target). Others have 1-3 items.
  * - Interaction: Touch the plate with 4 items to win. Else fail.
+ * - TV: Separate view. Reacts to success.
  */
 class Game12Bread {
     constructor() {
         this.ctx = null;
         this.canvas = null;
+        this.tvCtx = null;
+        this.tvCanvas = null;
         this.isActive = false;
         this.gameEnded = false;
 
+        // Interaction Animation State
+        this.showSuccessAnim = false;
+        this.interactionStep = 0; // 0: None, 1: 2-1, 2: 2-2, 3: 2-3
+        this.winningPlateItems = []; // To store the 4 cakes for TV display
 
-        // Plate positions (Percentage-based for 4 plates in a row at bottom)
-        // Based on the visual layout of Ally2_bg.png
+        // Plate positions (Matching the 2x2 layout in Ally2_cake_mob_plate_bg.png)
         this.platePositions = [
-            { id: 0, xPercent: 0.14, yPercent: 0.85, radius: 120 }, // Left (Moved left)
-            { id: 1, xPercent: 0.38, yPercent: 0.85, radius: 120 }, // Center-Left
-            { id: 2, xPercent: 0.62, yPercent: 0.85, radius: 120 }, // Center-Right
-            { id: 3, xPercent: 0.86, yPercent: 0.85, radius: 120 }  // Right (Moved right)
+            { id: 0, xPercent: 0.27, yPercent: 0.40, radius: 75 }, // Top Left
+            { id: 1, xPercent: 0.74, yPercent: 0.40, radius: 75 }, // Top Right
+            { id: 2, xPercent: 0.27, yPercent: 0.86, radius: 75 }, // Bottom Left
+            { id: 3, xPercent: 0.74, yPercent: 0.86, radius: 75 }  // Bottom Right
         ];
 
         this.plates = []; // Will hold { x, y, count, cakeImages: [] }
 
         // Image assets
         this.images = {
-            background: null,
-            cakes: [] // Array of 9 cake images
+            mobBackground: null,
+            tvBackground: null,
+            cakes: [], // Array of 9 cake images
+            interactions: [] // 2-1, 2-2, 2-3
         };
         this.imagesLoaded = false;
     }
@@ -35,34 +44,24 @@ class Game12Bread {
     loadImages() {
         return new Promise((resolve) => {
             let loaded = 0;
-            // Background
-            const bgImg = new Image();
-            bgImg.src = './assets/Ally2_cake/Ally2_bg.png';
-            bgImg.onload = () => {
-                this.images.background = bgImg;
-                checkLoad();
-            };
-            bgImg.onerror = () => {
-                console.error("Failed to load Ally2_bg.png");
-                checkLoad(); // Proceed even if fail
-            };
+            const toLoad = [
+                { name: 'mobBackground', src: 'assets/Ally2_cake/Ally2_resource/Ally2_cake_mob_plate_bg.png' },
+                { name: 'tvBackground', src: 'assets/Ally2_cake/ally2_resourceTV/Ally2_cake_tv_plate_bg.png' },
+                { name: 'int2_1', src: 'assets/Ally2_cake/ally2_cake_0205/Ally2_resource/interaction 2-1.png' },
+                { name: 'int2_2', src: 'assets/Ally2_cake/ally2_cake_0205/Ally2_resource/interaction 2-2.png' },
+                { name: 'int2_3', src: 'assets/Ally2_cake/ally2_cake_0205/Ally2_resource/interaction 2-3.png' }
+            ];
 
-            // Cake images (1 to 9)
-            // Ensure array index 0-8 matches cake 1-9
+            // Add cake images dynamically
+            const cakeSources = [];
             for (let i = 1; i <= 9; i++) {
-                const img = new Image();
-                img.src = `./assets/Ally2_cake/Ally2_resource/cake ${i}.png`;
-                img.onload = () => {
-                    this.images.cakes[i - 1] = img;
-                    checkLoad();
-                };
-                img.onerror = () => {
-                    console.error(`Failed to load cake ${i}.png`);
-                    checkLoad();
-                };
+                // Try both possible paths just in case, but prefer the one I found
+                // Found: Ally2_cake\Ally2_resource\cake 1.png AND Ally2_cake\ally2_cake_0205\Ally2_resource\cake 1.png
+                // I'll use the Ally2_resource base one as per original code, assuming they are valid
+                cakeSources.push({ index: i - 1, src: `assets/Ally2_cake/Ally2_resource/cake ${i}.png` });
             }
 
-            const total = 1 + 9; // BG + 9 Cakes
+            const total = toLoad.length + cakeSources.length;
 
             const checkLoad = () => {
                 loaded++;
@@ -71,12 +70,49 @@ class Game12Bread {
                     resolve();
                 }
             };
+
+            // Load named assets
+            toLoad.forEach(item => {
+                const img = new Image();
+                img.src = item.src;
+                img.onload = () => {
+                    if (item.name.startsWith('int')) {
+                        this.images.interactions.push({ name: item.name, img: img });
+                        // Sort interactions to ensure 2-1, 2-2, 2-3 order
+                        this.images.interactions.sort((a, b) => a.name.localeCompare(b.name));
+                    } else {
+                        this.images[item.name] = img;
+                    }
+                    checkLoad();
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load ${item.src}`);
+                    checkLoad();
+                };
+            });
+
+            // Load Cakes
+            cakeSources.forEach(item => {
+                const img = new Image();
+                img.src = item.src;
+                img.onload = () => {
+                    this.images.cakes[item.index] = img;
+                    checkLoad();
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load ${item.src}`);
+                    checkLoad();
+                };
+            });
         });
     }
 
-    init(ctx, canvas, container) {
+    init(ctx, canvas, container, tvCtx, tvCanvas) {
         this.ctx = ctx;
         this.canvas = canvas;
+        this.tvCtx = tvCtx;
+        this.tvCanvas = tvCanvas;
+
         if (!this.imagesLoaded) {
             this.loadImages();
         }
@@ -85,6 +121,8 @@ class Game12Bread {
     async start() {
         this.isActive = true;
         this.gameEnded = false;
+        this.showSuccessAnim = false;
+        this.interactionStep = 0;
 
         // Wait for images to load if not already loaded
         if (!this.imagesLoaded) {
@@ -93,90 +131,50 @@ class Game12Bread {
 
         this.generateLevel();
         this.drawScene();
+        this.renderTV(); // Initial TV render
 
-        // Start animation loop (mostly for maintaining render if needed, or static draw)
-        // Static draw is sufficient if no animations, but we might want clear/redraw on resize
         this.animate();
     }
 
     generateLevel() {
-        // 1. Assign counts to plates
-        // One plate must have 4. Others have 1-3.
         const counts = [4];
         for (let i = 0; i < 3; i++) {
-            // Random 1 to 3
             counts.push(Math.floor(Math.random() * 3) + 1);
         }
-
-        // Shuffle counts
         this.shuffleArray(counts);
 
-        // 2. Setup plates
         this.plates = this.platePositions.map((pos, index) => {
             const count = counts[index];
             const cakeImages = [];
-
-            // Select 'count' random images from the 9 available
             const selectedCakes = [];
+
             for (let c = 0; c < count; c++) {
                 const randIndex = Math.floor(Math.random() * 9);
                 if (this.images.cakes[randIndex]) {
                     selectedCakes.push(this.images.cakes[randIndex]);
-                } else {
-                    console.warn(`Ally2 - Cake image at index ${randIndex} not loaded`);
                 }
             }
 
-            // Horizontal & Vertical alignment based on count
-            // Define positions (x, y) for each cake
+            // Define relative positions for cakes on the plate
             let positions = [];
-
             switch (count) {
-                case 1:
-                    // 1 Row: 1 Center
-                    positions = [{ x: 0, y: 0 }];
-                    break;
-                case 2:
-                    // 1 Row: 2 Items
-                    positions = [{ x: -25, y: 0 }, { x: 25, y: 0 }];
-                    break;
-                case 3:
-                    // 2 Rows: 1 Top, 2 Bottom
-                    // Draw order: Top first (behind), then Bottom
-                    positions = [
-                        { x: 0, y: -45 },  // Top Row (Center)
-                        { x: -25, y: 10 }, // Bottom Row (Left)
-                        { x: 25, y: 10 }   // Bottom Row (Right)
-                    ];
-                    break;
-                case 4:
-                    // 2 Rows: 2 Top, 2 Bottom
-                    positions = [
-                        { x: -25, y: -45 }, // Top Row (Left)
-                        { x: 25, y: -45 },  // Top Row (Right)
-                        { x: -25, y: 10 },  // Bottom Row (Left)
-                        { x: 25, y: 10 }    // Bottom Row (Right)
-                    ];
-                    break;
-                default:
-                    positions = [{ x: 0, y: 0 }];
+                case 1: positions = [{ x: 0, y: 0 }]; break;
+                case 2: positions = [{ x: -25, y: 0 }, { x: 25, y: 0 }]; break;
+                case 3: positions = [{ x: 0, y: -45 }, { x: -25, y: 10 }, { x: 25, y: 10 }]; break;
+                case 4: positions = [{ x: -25, y: -45 }, { x: 25, y: -45 }, { x: -25, y: 10 }, { x: 25, y: 10 }]; break;
+                default: positions = [{ x: 0, y: 0 }];
             }
 
-            // Create cake items with calculated positions
             selectedCakes.forEach((img, cakeIndex) => {
-                const pos = positions[cakeIndex] || { x: 0, y: 0 };
-                cakeImages.push({
-                    img: img,
-                    ox: pos.x,
-                    oy: pos.y
-                });
+                const p = positions[cakeIndex] || { x: 0, y: 0 };
+                cakeImages.push({ img: img, ox: p.x, oy: p.y });
             });
 
             return {
                 ...pos,
                 count: count,
                 items: cakeImages,
-                waddleTimer: 0 // For animation
+                waddleTimer: 0
             };
         });
     }
@@ -191,16 +189,19 @@ class Game12Bread {
     animate() {
         if (!this.isActive) return;
 
-        // Update animation logic
+        // Update Waddle
         if (this.plates) {
             this.plates.forEach(plate => {
-                if (plate.waddleTimer > 0) {
-                    plate.waddleTimer--;
-                }
+                if (plate.waddleTimer > 0) plate.waddleTimer--;
             });
         }
 
+        // Draw Phone
         this.drawScene();
+
+        // Draw TV (if success animation is active or just refresh background)
+        this.renderTV();
+
         requestAnimationFrame(() => this.animate());
     }
 
@@ -208,94 +209,125 @@ class Game12Bread {
         if (!this.ctx) return;
         const width = this.canvas.width;
         const height = this.canvas.height;
-        const cx = width / 2;
-        const cy = height / 2;
 
         this.ctx.clearRect(0, 0, width, height);
 
-        // 1. Background
-        if (this.images.background) {
-            this.ctx.drawImage(this.images.background, 0, 0, width, height);
+        // Phone Background
+        if (this.images.mobBackground) {
+            this.ctx.drawImage(this.images.mobBackground, 0, 0, width, height);
         } else {
             this.ctx.fillStyle = '#FFEBEE';
             this.ctx.fillRect(0, 0, width, height);
         }
 
-        // 2. Plates & Cakes
-        // Iterate plates
-        this.plates.forEach((plate, plateIndex) => {
-            // Plate center using percentage-based positioning
+        // Draw Plates' Cakes
+        this.plates.forEach(plate => {
             const px = width * plate.xPercent;
             const py = height * plate.yPercent;
 
-            // Debug: Draw hit area
-            // this.ctx.beginPath();
-            // this.ctx.arc(px, py, plate.radius, 0, Math.PI * 2);
-            // this.ctx.strokeStyle = 'red';
-            // this.ctx.stroke();
-
-            // Draw items
-            plate.items.forEach((item, itemIndex) => {
+            plate.items.forEach(item => {
                 const img = item.img;
-                if (img && img.complete && img.naturalWidth > 0) {
-                    // Calculate cake dimensions
+                if (img) {
                     const drawW = 75;
                     const ratio = img.height / img.width;
                     const drawH = drawW * ratio;
-
-                    // Pivot point (Bottom Center of Cake)
-                    // px, py is plate center. item.ox, item.oy are offsets.
                     const centerX = px + item.ox;
                     const bottomY = py + item.oy;
 
                     this.ctx.save();
                     this.ctx.translate(centerX, bottomY);
-
-                    // Waddle animation
                     if (plate.waddleTimer > 0) {
-                        // Quick back-and-forth rotation
                         const rotation = Math.sin(plate.waddleTimer * 0.5) * 0.15;
                         this.ctx.rotate(rotation);
                     }
-
-                    // Draw image (bottom-center at 0,0)
                     this.ctx.drawImage(img, -drawW / 2, -drawH, drawW, drawH);
                     this.ctx.restore();
-
-                } else {
-                    // console.warn(`Ally2 - Plate ${plateIndex}, item ${itemIndex}: image not ready`, img);
                 }
             });
         });
     }
 
+    renderTV() {
+        if (!this.tvCtx || !this.images.tvBackground) return;
+        const width = this.tvCanvas.width;
+        const height = this.tvCanvas.height;
+
+        this.tvCtx.clearRect(0, 0, width, height);
+        this.tvCtx.drawImage(this.images.tvBackground, 0, 0, width, height);
+
+        // Success Animation
+        if (this.showSuccessAnim && this.winningPlateItems.length === 4) {
+            const centerX = (width / 2) - 165; // Moved slightly more right
+            const centerY = height * 0.77; // Position on the table plate
+
+            // Layout for Center Cluster on TV
+            // 2 Top, 2 Bottom
+            const positions = [
+                { x: -40, y: -60 }, { x: 40, y: -60 },
+                { x: -40, y: 20 }, { x: 40, y: 20 }
+            ];
+
+            this.winningPlateItems.forEach((item, index) => {
+                const img = item.img;
+                if (img) {
+                    const drawW = 100; // Larger on TV
+                    const ratio = img.height / img.width;
+                    const drawH = drawW * ratio;
+                    const pos = positions[index] || { x: 0, y: 0 };
+
+                    this.tvCtx.save();
+                    this.tvCtx.translate(centerX + pos.x, centerY + pos.y);
+                    // Add a little pop effect pulse if needed, or consistent
+                    this.tvCtx.drawImage(img, -drawW / 2, -drawH, drawW, drawH);
+                    this.tvCtx.restore();
+                }
+            });
+
+            // Draw Interaction text/images over it
+            if (this.interactionStep > 0) {
+                // Interactions array: 0 -> 2-1, 1 -> 2-2, 2 -> 2-3
+                // Draw based on step
+                // step 1: show int 2-1
+                // step 2: show int 2-2? Or accumulate? User: "interactions... appear in order"
+                // Usually sequence means replace or add. I'll overlay them or sequence.
+                // Assuming "Interaction 1, then 2, then 3".
+
+                const currentIntIndex = this.interactionStep - 1;
+                // Wait, if step 1 -> index 0.
+                if (currentIntIndex < this.images.interactions.length) {
+                    const intImg = this.images.interactions[currentIntIndex].img;
+                    if (intImg) {
+                        // Draw interaction centered
+                        const intW = 300;
+                        const intRatio = intImg.height / intImg.width;
+                        const intH = intW * intRatio;
+                        this.tvCtx.drawImage(intImg, centerX - intW / 2, centerY - 250, intW, intH);
+                    }
+                }
+            }
+        }
+    }
+
     onButtonDown(x, y) {
         if (!this.isActive || this.gameEnded) return;
 
-        // Check if touched a plate
-        // x, y are relative to canvas 0,0
         const width = this.canvas.width;
         const height = this.canvas.height;
 
         for (const plate of this.plates) {
             const px = width * plate.xPercent;
             const py = height * plate.yPercent;
-
-            // Distance check
             const dx = x - px;
             const dy = y - py;
-            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist <= plate.radius) {
-                // Touched this plate
-                plate.waddleTimer = 40; // Trigger waddle animation (approx 0.6s)
-
+            if (dx * dx + dy * dy <= plate.radius * plate.radius) {
+                plate.waddleTimer = 40;
                 if (plate.count === 4) {
-                    this.succeed();
+                    this.succeed(plate);
                 } else {
                     this.fail();
                 }
-                return; // Only handle one plate touch
+                return;
             }
         }
     }
@@ -303,43 +335,54 @@ class Game12Bread {
     onButtonUp() { }
 
     onTimeout() {
-        if (!this.gameEnded) {
-            this.fail();
-        }
+        if (!this.gameEnded) this.fail();
     }
 
-    succeed() {
+    succeed(winningPlate) {
         if (this.gameEnded) return;
         this.gameEnded = true;
-        // this.isActive = false; // Keep active for animation
+
+        // Setup TV Animation
+        this.showSuccessAnim = true;
+        this.winningPlateItems = winningPlate.items;
+        this.interactionStep = 0;
 
         audioManager.playSFX('ding');
         audioManager.playSuccess();
-        setTimeout(() => gameController.endGame(true), 1000);
+
+        // Animation Sequence
+        // Step 1 (Interaction 2-1): 0ms
+        // Step 2 (Interaction 2-2): 800ms
+        // Step 3 (Interaction 2-3): 1600ms
+        // End Game: 3000ms
+
+        this.interactionStep = 1; // Show first immediately
+
+        setTimeout(() => { this.interactionStep = 2; }, 1000);
+        setTimeout(() => { this.interactionStep = 3; }, 2000);
+
+        setTimeout(() => gameController.endGame(true), 3500);
     }
 
     fail() {
         if (this.gameEnded) return;
         this.gameEnded = true;
-        // this.isActive = false; // Keep active for animation
-
-        audioManager.playFail(); // Assuming this method (or 'wrong')
+        audioManager.playFail();
         setTimeout(() => gameController.endGame(false), 1000);
     }
 
     cleanup() {
         this.isActive = false;
-        // Clean up logic
+        this.showSuccessAnim = false;
+        this.winningPlateItems = [];
     }
 }
 
-// Instantiate and register
+// Instantiate
 const game12Bread = new Game12Bread();
-// Check if gameController exists (it might be loaded later)
 if (typeof gameController !== 'undefined') {
     gameController.registerGame(12, game12Bread);
 } else {
-    // Wait for DOMContentLoaded or gameController to be ready
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             if (typeof gameController !== 'undefined') {

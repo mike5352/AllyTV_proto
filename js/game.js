@@ -254,14 +254,18 @@ class GameController {
     startMirrorLoop() {
         const mirror = () => {
             if (this.currentState === 'GAME') {
-                // Mirror game canvas to TV canvas
-                this.tvCtx.clearRect(0, 0, this.tvCanvas.width, this.tvCanvas.height);
-                this.tvCtx.drawImage(
-                    this.gameCanvas,
-                    0, 0,
-                    this.tvCanvas.width,
-                    this.tvCanvas.height
-                );
+                if (this.currentGame && typeof this.currentGame.renderTV === 'function') {
+                    this.currentGame.renderTV();
+                } else {
+                    // Mirror game canvas to TV canvas
+                    this.tvCtx.clearRect(0, 0, this.tvCanvas.width, this.tvCanvas.height);
+                    this.tvCtx.drawImage(
+                        this.gameCanvas,
+                        0, 0,
+                        this.tvCanvas.width,
+                        this.tvCanvas.height
+                    );
+                }
             }
             requestAnimationFrame(mirror);
         };
@@ -356,7 +360,8 @@ class GameController {
 
             if (this.currentGame) {
                 // Initialize and start the game
-                this.currentGame.init(this.ctx, this.gameCanvas, this.gameContainer);
+                // Pass TV context/canvas effectively if the game supports it
+                this.currentGame.init(this.ctx, this.gameCanvas, this.gameContainer, this.tvCtx, this.tvCanvas);
                 this.currentGame.start();
 
                 // Start timer
