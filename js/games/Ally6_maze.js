@@ -188,16 +188,16 @@ class Game16Maze {
             const origW = mazeImg.naturalWidth;
             const origH = mazeImg.naturalHeight;
             const scale = w / origW;
-            const drawW = w;
-            const drawH = origH * scale;
+            const drawW = w * 0.9;
+            const drawH = origH * (drawW / origW);
             // Position maze to fill the top portion - same proportion as design
             const mazeY = h * 0.02;
-            this.ctx.drawImage(mazeImg, 0, mazeY, drawW, drawH);
+            this.ctx.drawImage(mazeImg, (w - drawW) / 2, mazeY, drawW, drawH);
         }
 
         // 3. Characters at bottom (4 characters evenly spaced)
-        const charAreaY = h * 0.72; // Characters start at 72% of height
-        const charAreaH = h * 0.28;
+        const charAreaY = h * 0.64; // Characters moved up further from 0.69
+        const charAreaH = h * 0.36; // Increased to maintain bottom space if needed
         const charSpacing = w / 4;
 
         for (let i = 0; i < 4; i++) {
@@ -213,11 +213,13 @@ class Game16Maze {
                 const origW = charImg.naturalWidth;
                 const origH = charImg.naturalHeight;
                 // Scale to fit within the character area
-                const maxCharH = charAreaH * 0.85;
+                const maxCharH = charAreaH * 1
                 const scale = maxCharH / origH;
                 const drawW = origW * scale;
                 const drawH = origH * scale;
-                const cx = charSpacing * i + charSpacing / 2;
+                let cx = charSpacing * i + charSpacing / 2;
+                if (i === 0) cx += w * 0.03;
+                if (i === 3) cx -= w * 0.03; // Shift last character slightly left
                 this.ctx.drawImage(charImg, cx - drawW / 2, charAreaY + (charAreaH - drawH) / 2, drawW, drawH);
             }
         }
@@ -241,11 +243,11 @@ class Game16Maze {
             const origW = tvMazeImg.naturalWidth;
             const origH = tvMazeImg.naturalHeight;
             const scale = w / origW;
-            const drawW = w;
-            const drawH = origH * scale;
+            const drawW = w * 0.9;
+            const drawH = origH * (drawW / origW);
             // Position maze in the lower portion of TV
             const mazeY = h - drawH - h * 0.02;
-            this.tvCtx.drawImage(tvMazeImg, 0, mazeY, drawW, drawH);
+            this.tvCtx.drawImage(tvMazeImg, (w - drawW) / 2, mazeY, drawW, drawH);
         }
 
         // 3. Success/Fail effects
@@ -269,7 +271,7 @@ class Game16Maze {
             if (charImg && charImg.complete) {
                 const origW = charImg.naturalWidth;
                 const origH = charImg.naturalHeight;
-                const scale = Math.min(h * 0.4 / origH, w * 0.3 / origW);
+                const scale = Math.min(h * 0.44 / origH, w * 0.33 / origW); // Increased from 0.4 and 0.3
                 const drawW = origW * scale;
                 const drawH = origH * scale;
                 this.tvCtx.drawImage(charImg, w / 2 - drawW / 2, h / 2 - drawH / 2, drawW, drawH);
@@ -308,7 +310,7 @@ class Game16Maze {
             if (charImg && charImg.complete) {
                 const origW = charImg.naturalWidth;
                 const origH = charImg.naturalHeight;
-                const scale = Math.min(h * 0.4 / origH, w * 0.3 / origW);
+                const scale = Math.min(h * 0.44 / origH, w * 0.33 / origW); // Increased from 0.4 and 0.3
                 const drawW = origW * scale;
                 const drawH = origH * scale;
                 this.tvCtx.drawImage(charImg, w / 2 - drawW / 2, h / 2 - drawH / 2, drawW, drawH);
@@ -347,12 +349,14 @@ class Game16Maze {
         const h = this.canvas.height;
 
         // Character touch area
-        const charAreaY = h * 0.72;
-        const charAreaH = h * 0.28;
+        const charAreaY = h * 0.64; // Characters moved up further from 0.69
+        const charAreaH = h * 0.36;
         const charSpacing = w / 4;
 
         for (let i = 0; i < 4; i++) {
-            const cx = charSpacing * i + charSpacing / 2;
+            let cx = charSpacing * i + charSpacing / 2;
+            if (i === 0) cx += w * 0.03;
+            if (i === 3) cx -= w * 0.03; // Shift last character slightly left
             const charIdx = this.characters[i];
             const charImg = this.images.characters[charIdx];
 
@@ -360,7 +364,7 @@ class Game16Maze {
 
             const origW = charImg.naturalWidth;
             const origH = charImg.naturalHeight;
-            const maxCharH = charAreaH * 0.85;
+            const maxCharH = charAreaH * 0.935; // Increased from 0.85
             const scale = maxCharH / origH;
             const drawW = origW * scale;
             const drawH = origH * scale;

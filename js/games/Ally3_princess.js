@@ -28,8 +28,10 @@ class Game13Hair {
             // TV assets
             tv_bg: null,
             tv_castle: null,
-            tv_p_long: null,
-            tv_p_short: null,
+            tv_p_long1: null,
+            tv_p_long2: null,
+            tv_p_short1: null,
+            tv_p_short2: null,
 
             // Mobile assets
             mob_bg: null,
@@ -61,8 +63,10 @@ class Game13Hair {
             const imageSources = {
                 tv_bg: resourcePath + 'tv/tv_Ally3_princess_bg.png',
                 // Explicitly use the filenames with leading spaces as seen in the filesystem
-                tv_p_long: resourcePath + 'tv/ tv_princess 1-3.png',
-                tv_p_short: resourcePath + 'tv/ tv_princess 2-4.png',
+                tv_p_long1: resourcePath + 'tv/ tv_princess 1-3.png',
+                tv_p_long2: resourcePath + 'tv/ tv_princess 1-4.png',
+                tv_p_short1: resourcePath + 'tv/ tv_princess 2-3.png',
+                tv_p_short2: resourcePath + 'tv/ tv_princess 2-4.png',
 
                 mob_bg: resourcePath + 'mobile/mob_Ally3_princess_bg.png',
                 mob_castle: resourcePath + 'mobile/mob_castle.png',
@@ -150,13 +154,15 @@ class Game13Hair {
         const height = this.canvas.height;
 
         this.princesses = types.map((type, index) => {
+            const longImg = Math.random() > 0.5 ? this.images.tv_p_long1 : this.images.tv_p_long2;
+            const shortImg = Math.random() > 0.5 ? this.images.tv_p_short1 : this.images.tv_p_short2;
             return {
                 id: index,
                 type: type, // 0: Orange hair (target), 1: Brown hair
                 x: index === 0 ? width * 0.25 : width * 0.75, // Mobile positions
                 tvX: index === 0 ? this.tvCanvas.width * 0.31 : this.tvCanvas.width * 0.69, // TV positions
                 isTarget: type === 0,
-                img: type === 0 ? this.images.tv_p_long : this.images.tv_p_short
+                img: type === 0 ? longImg : shortImg
             };
         });
 
@@ -217,13 +223,13 @@ class Game13Hair {
         });
 
         // 4. Prince
-        if (this.images.mob_prince) {
+        if (this.images.mob_prince && !this.inFailSequence) {
             const pw = 120;
             const ph = 142;
             this.ctx.drawImage(this.images.mob_prince, w / 2 - pw / 2, h - ph - 20, pw, ph);
 
             // Questions
-            if (!this.inSuccessSequence && !this.inFailSequence) {
+            if (!this.inSuccessSequence) {
                 const showFirst = Math.floor(this.animationFrame / 30) % 2 === 0;
                 const qImg = showFirst ? this.images.question1 : this.images.question2;
                 if (qImg) {
@@ -255,7 +261,9 @@ class Game13Hair {
         this.princesses.forEach(p => {
             // Re-assign image if it was null during start() due to slow loading
             if (!p.img) {
-                p.img = p.type === 0 ? this.images.tv_p_long : this.images.tv_p_short;
+                const longImg = Math.random() > 0.5 ? this.images.tv_p_long1 : this.images.tv_p_long2;
+                const shortImg = Math.random() > 0.5 ? this.images.tv_p_short1 : this.images.tv_p_short2;
+                p.img = p.type === 0 ? longImg : shortImg;
             }
 
             if (p.img && p.img.complete) {

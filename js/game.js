@@ -79,7 +79,19 @@ class GameController {
             14: { text: "꽃병에 꽃 2송이를 찾아보자!", bg: "assets/Ally title_font/Ally4_title_bg.png" },
             15: { text: "새콤 달콤 포도를 채워보자!", bg: "assets/Ally title_font/Ally5_title_bg.png" },
             16: { text: "편지 부치러 우체국 꼬불꼬불 길 찾기!", bg: "" },
-            17: { text: "농부 할아버지를 도와주자!", bg: "" }
+            17: { text: "농부 할아버지를 도와주자!", bg: "" },
+            18: { text: "어항에 물고기를 넣어줘!", bg: "" },
+            19: { text: "같은 색 풍선을 찾아봐!", bg: "" },
+            20: { text: "빠진 조각을 찾아줘!", bg: "" },
+            21: { text: "큰 동물을 찾아보자!", bg: "" },
+            22: { text: "그림자를 맞춰봐!", bg: "" },
+            23: { text: "기차에 순서대로 태워줘!", bg: "" },
+            24: { text: "과일 바구니에 담아보자!", bg: "" },
+            25: { text: "악기 소리를 맞춰봐!", bg: "" },
+            26: { text: "동물 친구를 집에 데려다줘!", bg: "" },
+            27: { text: "별을 세어봐!", bg: "" },
+            28: { text: "같은 모양 간식 찾기!", bg: "" },
+            29: { text: "오아시스에 비춰진 틀린 그림 찾기!", bg: "" }
         };
 
         // Canvas contexts
@@ -472,6 +484,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof game15Grape !== 'undefined') gameController.registerGame(15, game15Grape);
     if (typeof game16Maze !== 'undefined') gameController.registerGame(16, game16Maze);
     if (typeof game17Carrot !== 'undefined') gameController.registerGame(17, game17Carrot);
+    if (typeof game28Donut !== 'undefined') gameController.registerGame(28, game28Donut);
+    if (typeof game29Desert !== 'undefined') gameController.registerGame(29, game29Desert);
 
     // Show home screen
     homeScreen.show();

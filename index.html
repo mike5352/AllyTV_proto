@@ -27,25 +27,56 @@
 
                 <!-- TV Home Screen (mirrored) -->
                 <div id="tv-home-screen" class="tv-screen active">
-                    <div class="game-cards">
-                        <div class="card-row">
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                    <!-- Page 1: Existing Games -->
+                    <div class="home-page active" data-page="0">
+                        <div class="game-cards">
+                            <div class="card-row">
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally8_donut/Ally8_donut_card 01.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally9_desert/Ally9_desert_card.png');"></div>
+                            </div>
+                            <div class="card-row">
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
+                                <div class="game-card-mirror"
+                                    style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');"></div>
+                            </div>
                         </div>
-                        <div class="card-row">
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
-                            <div class="game-card-mirror"
-                                style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');"></div>
+                    </div>
+                    <!-- Page 2: New Games -->
+                    <div class="home-page" data-page="1">
+                        <div class="game-cards">
+                            <div class="card-row">
+                                <div class="game-card-mirror"><span class="card-icon">🐟</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🎨</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🧩</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🐘</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🌙</span></div>
+                            </div>
+                            <div class="card-row">
+                                <div class="game-card-mirror"><span class="card-icon">🚂</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🍎</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🔔</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">🏠</span></div>
+                                <div class="game-card-mirror"><span class="card-icon">⭐</span></div>
+                            </div>
                         </div>
+                    </div>
+                    <!-- Page indicator (TV) -->
+                    <div class="page-indicator-mirror">
+                        <span class="page-dot active"></span>
+                        <span class="page-dot"></span>
                     </div>
                 </div>
 
@@ -85,25 +116,63 @@
 
             <!-- Home Screen -->
             <div id="home-screen" class="screen active">
-                <div class="game-cards">
-                    <div class="card-row">
-                        <div class="game-card" data-game="11"
-                            style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
-                        <div class="game-card" data-game="12"
-                            style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
-                        <div class="game-card" data-game="13"
-                            style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                <!-- Left Nav Button -->
+                <button class="page-nav-btn page-nav-left" id="page-nav-left" style="display:none;">‹</button>
+                <!-- Right Nav Button -->
+                <button class="page-nav-btn page-nav-right" id="page-nav-right">›</button>
+
+                <!-- Page 1: Existing Games (8) - 4+4 layout -->
+                <div class="home-page active" data-page="0">
+                    <div class="game-cards">
+                        <div class="card-row">
+                            <div class="game-card" data-game="11"
+                                style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
+                            <div class="game-card" data-game="12"
+                                style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
+                            <div class="game-card" data-game="13"
+                                style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                            <div class="game-card" data-game="28"
+                                style="background-image: url('assets/Ally8_donut/Ally8_donut_card 01.png');"></div>
+                            <div class="game-card" data-game="29"
+                                style="background-image: url('assets/Ally9_desert/Ally9_desert_card.png');"></div>
+                        </div>
+                        <div class="card-row">
+                            <div class="game-card" data-game="14"
+                                style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
+                            <div class="game-card" data-game="15"
+                                style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
+                            <div class="game-card" data-game="16"
+                                style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
+                            <div class="game-card" data-game="17"
+                                style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');"></div>
+                        </div>
                     </div>
-                    <div class="card-row">
-                        <div class="game-card" data-game="14"
-                            style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
-                        <div class="game-card" data-game="15"
-                            style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
-                        <div class="game-card" data-game="16"
-                            style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
-                        <div class="game-card" data-game="17"
-                            style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');"></div>
+                </div>
+
+                <!-- Page 2: New Games (10) -->
+                <div class="home-page" data-page="1">
+                    <div class="game-cards">
+                        <div class="card-row">
+                            <div class="game-card" data-game="18"><span class="card-icon">🐟</span></div>
+                            <div class="game-card" data-game="19"><span class="card-icon">🎨</span></div>
+                            <div class="game-card" data-game="20"><span class="card-icon">🧩</span></div>
+                            <div class="game-card" data-game="21"><span class="card-icon">🐘</span></div>
+                            <div class="game-card" data-game="22"><span class="card-icon">🌙</span></div>
+                        </div>
+                        <div class="card-row">
+                            <div class="game-card" data-game="23"><span class="card-icon">🚂</span></div>
+                            <div class="game-card" data-game="24"><span class="card-icon">🍎</span></div>
+                            <div class="game-card" data-game="25"><span class="card-icon">🔔</span></div>
+                            <div class="game-card" data-game="26"><span class="card-icon">🏠</span></div>
+                            <div class="game-card" data-game="27"><span class="card-icon">⭐</span></div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Page indicator -->
+                <div class="page-indicator">
+                    <span class="page-dot active" data-page="0"></span>
+                    <span class="page-dot" data-page="1"></span>
                 </div>
             </div>
 
@@ -156,6 +225,18 @@
     <script src="js/games/Ally5_grape.js"></script>
     <script src="js/games/Ally6_maze.js"></script>
     <script src="js/games/Ally7_carrot.js"></script>
+    <script src="js/games/Ally8_donut.js"></script>
+    <script src="js/games/Ally51_fish.js"></script>
+    <script src="js/games/Ally52_balloon.js"></script>
+    <script src="js/games/Ally53_puzzle.js"></script>
+    <script src="js/games/Ally54_big_animal.js"></script>
+    <script src="js/games/Ally55_shadow.js"></script>
+    <script src="js/games/Ally56_train.js"></script>
+    <script src="js/games/Ally57_fruit_basket.js"></script>
+    <script src="js/games/Ally58_instrument.js"></script>
+    <script src="js/games/Ally59_animal_home.js"></script>
+    <script src="js/games/Ally60_star_count.js"></script>
+    <script src="js/games/Ally9_desert.js"></script>
     <script src="js/homeScreen.js"></script>
     <script src="js/resultScreen.js"></script>
     <script src="js/game.js"></script>

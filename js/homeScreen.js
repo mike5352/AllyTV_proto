@@ -1,12 +1,22 @@
 /**
  * Home Screen Controller for Antigravity Petit Game
- * Handles game card selection and transitions
+ * Handles game card selection, transitions, and page navigation
  */
 class HomeScreen {
     constructor() {
         this.screen = document.getElementById('home-screen');
         this.cards = document.querySelectorAll('.game-card');
         this.isTransitioning = false;
+
+        // Pagination
+        this.currentPage = 0;
+        this.totalPages = 2;
+        this.pages = document.querySelectorAll('#home-screen .home-page');
+        this.tvPages = document.querySelectorAll('#tv-home-screen .home-page');
+        this.navLeft = document.getElementById('page-nav-left');
+        this.navRight = document.getElementById('page-nav-right');
+        this.dots = document.querySelectorAll('#home-screen .page-dot');
+        this.tvDots = document.querySelectorAll('#tv-home-screen .page-dot');
 
         this.init();
     }
@@ -20,6 +30,73 @@ class HomeScreen {
                 this.handleCardClick(e, card);
             });
         });
+
+        // Page navigation buttons
+        if (this.navLeft) {
+            this.navLeft.addEventListener('click', (e) => { e.stopPropagation(); this.goToPage(this.currentPage - 1); });
+            this.navLeft.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); this.goToPage(this.currentPage - 1); });
+        }
+        if (this.navRight) {
+            this.navRight.addEventListener('click', (e) => { e.stopPropagation(); this.goToPage(this.currentPage + 1); });
+            this.navRight.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); this.goToPage(this.currentPage + 1); });
+        }
+
+        this.updateNavButtons();
+    }
+
+    /**
+     * Navigate to a specific page
+     */
+    goToPage(pageIndex) {
+        if (pageIndex < 0 || pageIndex >= this.totalPages || pageIndex === this.currentPage) return;
+
+        this.currentPage = pageIndex;
+
+        // Update phone home screen pages
+        this.pages.forEach(page => {
+            page.classList.remove('active');
+            if (parseInt(page.dataset.page) === this.currentPage) {
+                page.classList.add('active');
+            }
+        });
+
+        // Mirror on TV
+        this.tvPages.forEach(page => {
+            page.classList.remove('active');
+            if (parseInt(page.dataset.page) === this.currentPage) {
+                page.classList.add('active');
+            }
+        });
+
+        // Update dots
+        this.dots.forEach(dot => {
+            dot.classList.remove('active');
+            if (parseInt(dot.dataset.page) === this.currentPage) {
+                dot.classList.add('active');
+            }
+        });
+        this.tvDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === this.currentPage);
+        });
+
+        this.updateNavButtons();
+
+        // Play click sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playSFX('click');
+        }
+    }
+
+    /**
+     * Show/hide nav buttons based on current page
+     */
+    updateNavButtons() {
+        if (this.navLeft) {
+            this.navLeft.style.display = this.currentPage > 0 ? 'flex' : 'none';
+        }
+        if (this.navRight) {
+            this.navRight.style.display = this.currentPage < this.totalPages - 1 ? 'flex' : 'none';
+        }
     }
 
     handleCardClick(e, card) {
