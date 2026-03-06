@@ -120,6 +120,23 @@ body {
 #tv-home-screen {
     background: url('../assets/Ally_UI/bg_home.png') no-repeat center center;
     background-size: cover;
+    position: relative;
+}
+
+#tv-home-screen .home-page {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#tv-home-screen .home-page.active {
+    display: flex;
 }
 
 .game-card-mirror {
