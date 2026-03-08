@@ -46,18 +46,35 @@ body {
     width: 100%;
     height: 100%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#scale-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /* transform is handled by game.js: "translate(-50%, -50%) scale(X)" */
+    display: flex;
     flex-direction: column;
-    padding: 20px;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 1000px;
+    /* Base design width */
+    height: 880px;
+    /* 450 (TV) + 400 (Phone) + 30 (gap) */
 }
 
 /* ===== TV Frame (Top) ===== */
 #tv-frame {
-    flex: 1;
-    width: 90%;
-    max-width: 1000px;
-    margin: 0 auto;
-    /* Center horizontally */
+    flex: none;
+    width: 1000px;
+    height: 450px;
     position: relative;
     background: #1a1a1a;
     border: 20px solid #2c3e50;
@@ -288,12 +305,9 @@ body {
 
 /* ===== Phone Frame (Bottom) ===== */
 #phone-frame {
-    flex: 0.8;
-    width: 720px;
-    /* Wider to fit content like a tablet/landscape phone */
-    max-width: 100%;
-    margin: 0 auto;
-    /* Center horizontally */
+    flex: none;
+    width: 800px;
+    height: 400px;
     position: relative;
     background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
     border: 15px solid #111;

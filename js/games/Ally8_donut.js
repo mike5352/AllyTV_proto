@@ -16,6 +16,10 @@ class Game28Donut {
         this.isActive = false;
         this.gameEnded = false;
 
+        // Design (reference) dimensions - captured at game start
+        this.designWidth = 0;
+        this.designHeight = 0;
+
         // Game state
         this.selectedLeft = null; // index of selected left donut
         this.matches = []; // completed matches: [{leftIdx, rightIdx, progress}]
@@ -26,13 +30,15 @@ class Game28Donut {
         this.leftOrder = []; // shuffled indices [0,1,2] for donut_1,2,3
         this.rightOrder = []; // shuffled indices [0,1,2] for donut_a,b,c
 
-        // Layout constants (percentages)
+        // Layout constants (percentages of design dimensions)
         this.leftX = 0.22;
         this.rightX = 0.78;
         this.yPositions = [0.28, 0.52, 0.76];
-        this.itemSize = 0.13; // percentage of canvas width (decreased by 10% from 0.18)
-        this.dotSize = 12; // dot pixel size
-        this.dotGap = 0.04; // gap between item edge and dot (percentage of canvas width)
+        this.itemSize = 0.13; // percentage of design width
+        this.dotSizeRatio = 0.024; // dot size as percentage of design width
+        this.dotGap = 0.04; // gap between item edge and dot (percentage of design width)
+        this.lineWidthRatio = 0.014; // line width as percentage of design width
+        this.shadowBlurRatio = 0.03; // shadow blur as percentage of design width
 
         // TV state
         this.tvCharacterState = 'normal'; // 'normal', 'success', 'fail'
@@ -153,6 +159,10 @@ class Game28Donut {
             await this.loadImages();
         }
 
+        // Capture initial canvas dimensions as design reference
+        this.designWidth = this.canvas.width;
+        this.designHeight = this.canvas.height;
+
         this.animate();
     }
 
@@ -163,6 +173,20 @@ class Game28Donut {
             [a[i], a[j]] = [a[j], a[i]];
         }
         return a;
+    }
+
+    // Calculate uniform scale transform to fit design-space content into current canvas
+    getTransform() {
+        const canvasW = this.canvas.width;
+        const canvasH = this.canvas.height;
+        const dw = this.designWidth || canvasW;
+        const dh = this.designHeight || canvasH;
+        const scaleX = canvasW / dw;
+        const scaleY = canvasH / dh;
+        const scale = Math.min(scaleX, scaleY);
+        const offsetX = (canvasW - dw * scale) / 2;
+        const offsetY = (canvasH - dh * scale) / 2;
+        return { scale, offsetX, offsetY, dw, dh };
     }
 
     animate() {
@@ -210,21 +234,30 @@ class Game28Donut {
 
     drawScene() {
         if (!this.ctx) return;
-        const w = this.canvas.width;
-        const h = this.canvas.height;
+        const canvasW = this.canvas.width;
+        const canvasH = this.canvas.height;
 
-        this.ctx.clearRect(0, 0, w, h);
+        this.ctx.clearRect(0, 0, canvasW, canvasH);
 
-        // Background
+        // Background fills entire canvas (stretches to fit)
         if (this.images.mobBg) {
-            this.ctx.drawImage(this.images.mobBg, 0, 0, w, h);
+            this.ctx.drawImage(this.images.mobBg, 0, 0, canvasW, canvasH);
         } else {
             this.ctx.fillStyle = '#F8BBD0';
-            this.ctx.fillRect(0, 0, w, h);
+            this.ctx.fillRect(0, 0, canvasW, canvasH);
         }
 
+        // Apply uniform scale transform for game objects
+        const { scale, offsetX, offsetY, dw, dh } = this.getTransform();
+        const w = dw; // design width
+        const h = dh; // design height
+
+        this.ctx.save();
+        this.ctx.translate(offsetX, offsetY);
+        this.ctx.scale(scale, scale);
+
         const itemW = w * this.itemSize;
-        const ds = this.dotSize;
+        const ds = w * this.dotSizeRatio;
 
         // Draw completed match lines (behind dots and items)
         this.matches.forEach(match => {
@@ -256,7 +289,7 @@ class Game28Donut {
                 // Highlight if selected
                 if (this.selectedLeft === i) {
                     this.ctx.shadowColor = '#FFFF00';
-                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowBlur = w * this.shadowBlurRatio * scale;
                 }
 
                 this.ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
@@ -312,6 +345,8 @@ class Game28Donut {
                 this.ctx.fill();
             }
         }
+
+        this.ctx.restore(); // Restore uniform scale transform
     }
 
     drawLine(ctx, w, h, leftPositionIdx, rightPositionIdx, progress) {
@@ -339,7 +374,7 @@ class Game28Donut {
 
         ctx.save();
         ctx.strokeStyle = '#FFFF00';
-        ctx.lineWidth = 7;
+        ctx.lineWidth = w * this.lineWidthRatio;
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(startPos.x, startPos.y);
@@ -437,7 +472,7 @@ class Game28Donut {
             const ratio = charImg.height / charImg.width;
             const ch = cw * ratio;
             const cx = (w - cw) / 2;  // centered horizontally
-            const cy = h * 0.06;
+            const cy = h * 0.015; // moved slightly up from 0.06
             this.tvCtx.drawImage(charImg, cx, cy, cw, ch);
 
             // Success interactions (sparkles around character)
@@ -472,8 +507,12 @@ class Game28Donut {
     onButtonDown(x, y) {
         if (!this.isActive || this.gameEnded) return;
 
-        const w = this.canvas.width;
-        const h = this.canvas.height;
+        // Transform input coordinates from canvas-space to design-space
+        const { scale, offsetX, offsetY, dw, dh } = this.getTransform();
+        const designX = (x - offsetX) / scale;
+        const designY = (y - offsetY) / scale;
+        const w = dw;
+        const h = dh;
         const itemW = w * this.itemSize;
 
         // Check if clicking on a left donut (rectangular hit test)
@@ -483,7 +522,7 @@ class Game28Donut {
             const donutIdx = this.leftOrder[i];
             const img = this.getLeftDonutImage(donutIdx);
 
-            if (this.hitTestItem(x, y, lx, ly, img, itemW)) {
+            if (this.hitTestItem(designX, designY, lx, ly, img, itemW)) {
                 // Check if this left position is already matched
                 const alreadyMatched = this.matches.some(m => m.leftIdx === i);
                 if (alreadyMatched) return;
@@ -503,7 +542,7 @@ class Game28Donut {
             const donutIdx = this.rightOrder[i];
             const img = this.getRightDonutImage(donutIdx);
 
-            if (this.hitTestItem(x, y, rx, ry, img, itemW)) {
+            if (this.hitTestItem(designX, designY, rx, ry, img, itemW)) {
                 // Check if this right position is already matched
                 const alreadyMatched = this.matches.some(m => m.rightIdx === i);
                 if (alreadyMatched) return;

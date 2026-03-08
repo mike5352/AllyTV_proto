@@ -11,136 +11,142 @@
 
 <body>
     <div id="app">
-        <!-- TV Frame (Top - Mirrored View, Non-interactive) -->
-        <div id="tv-frame">
-            <div class="tv-content">
-                <canvas id="tv-canvas"></canvas>
+        <div id="scale-wrapper">
+            <!-- TV Frame (Top - Mirrored View, Non-interactive) -->
+            <div id="tv-frame">
+                <div class="tv-content">
+                    <canvas id="tv-canvas"></canvas>
 
-                <!-- TV Timer (mirrored) -->
-                <div id="tv-timer-container" class="timer-container-mirror">
-                    <img id="tv-timer-image" src="" alt="timer" />
-                    <svg id="tv-timer-progress-svg" viewBox="0 0 100 100">
-                        <circle id="tv-timer-progress-circle" cx="50" cy="50" r="32" />
+                    <!-- TV Timer (mirrored) -->
+                    <div id="tv-timer-container" class="timer-container-mirror">
+                        <img id="tv-timer-image" src="" alt="timer" />
+                        <svg id="tv-timer-progress-svg" viewBox="0 0 100 100">
+                            <circle id="tv-timer-progress-circle" cx="50" cy="50" r="32" />
+                        </svg>
+                        <span id="tv-timer-text">5</span>
+                    </div>
+
+                    <!-- TV Home Screen (mirrored) -->
+                    <div id="tv-home-screen" class="tv-screen active">
+                        <!-- Page 1: Existing Games -->
+                        <div class="home-page active" data-page="0">
+                            <div class="game-cards">
+                                <div class="card-row">
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');">
+                                    </div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally8_donut/Ally8_donut_card 01.png');">
+                                    </div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally9_desert/Ally9_desert_card.png');">
+                                    </div>
+                                </div>
+                                <div class="card-row">
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
+                                    <div class="game-card-mirror"
+                                        style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TV Game Screen (mirrored via canvas) -->
+                    <div id="tv-game-screen" class="tv-screen">
+                        <div id="tv-game-title-bar">
+                            <span id="tv-game-title-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- TV Result Screen (mirrored from phone) -->
+                    <div id="tv-result-screen" class="tv-screen">
+                        <div class="tv-result-content">
+                            <div class="tv-result-icon" id="tv-result-icon"></div>
+                        </div>
+                    </div>
+
+                    <!-- TV Result Overlay (dim + card over game canvas) -->
+                    <div id="tv-result-overlay" class="result-overlay">
+                        <div class="result-overlay-icon" id="tv-overlay-icon"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone Frame (Bottom - Interactive) -->
+            <div id="phone-frame">
+                <canvas id="game-canvas"></canvas>
+
+                <!-- Timer (Top Right) -->
+                <div id="timer-container">
+                    <img id="timer-image" src="" alt="timer" />
+                    <svg id="timer-progress-svg" viewBox="0 0 100 100">
+                        <circle id="timer-progress-circle" cx="50" cy="50" r="32" />
                     </svg>
-                    <span id="tv-timer-text">5</span>
+                    <span id="timer-text">5</span>
                 </div>
 
-                <!-- TV Home Screen (mirrored) -->
-                <div id="tv-home-screen" class="tv-screen active">
-                    <!-- Page 1: Existing Games -->
+                <div id="home-screen" class="screen active">
+
+                    <!-- Page 1: Existing Games (8) - 4+4 layout -->
                     <div class="home-page active" data-page="0">
                         <div class="game-cards">
                             <div class="card-row">
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="11"
                                     style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="12"
                                     style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="13"
                                     style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="28"
                                     style="background-image: url('assets/Ally8_donut/Ally8_donut_card 01.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="29"
                                     style="background-image: url('assets/Ally9_desert/Ally9_desert_card.png');"></div>
                             </div>
                             <div class="card-row">
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="14"
                                     style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="15"
                                     style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="16"
                                     style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
-                                <div class="game-card-mirror"
+                                <div class="game-card" data-game="17"
                                     style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');"></div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- TV Game Screen (mirrored via canvas) -->
-                <div id="tv-game-screen" class="tv-screen">
-                    <div id="tv-game-title-bar">
-                        <span id="tv-game-title-text"></span>
+                <!-- Game Screen -->
+                <div id="game-screen" class="screen">
+                    <div id="game-container"></div>
+                </div>
+
+                <!-- Result Screen (legacy - kept for non-Ally games) -->
+                <div id="result-screen" class="screen">
+                    <div class="result-icon" id="result-icon"></div>
+                    <div class="result-buttons">
+                        <button class="result-btn result-btn-home" id="btn-home"></button>
+                        <button class="result-btn result-btn-retry" id="btn-retry"></button>
                     </div>
                 </div>
 
-                <!-- TV Result Screen (mirrored from phone) -->
-                <div id="tv-result-screen" class="tv-screen">
-                    <div class="tv-result-content">
-                        <div class="tv-result-icon" id="tv-result-icon"></div>
+                <!-- Mobile Result Overlay (dim + buttons over game canvas, no result card) -->
+                <div id="mob-result-overlay" class="result-overlay">
+                    <div class="result-overlay-buttons">
+                        <button class="result-btn result-btn-home" id="overlay-btn-home"></button>
+                        <button class="result-btn result-btn-retry" id="overlay-btn-retry"></button>
                     </div>
-                </div>
-
-                <!-- TV Result Overlay (dim + card over game canvas) -->
-                <div id="tv-result-overlay" class="result-overlay">
-                    <div class="result-overlay-icon" id="tv-overlay-icon"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Phone Frame (Bottom - Interactive) -->
-        <div id="phone-frame">
-            <canvas id="game-canvas"></canvas>
-
-            <!-- Timer (Top Right) -->
-            <div id="timer-container">
-                <img id="timer-image" src="" alt="timer" />
-                <svg id="timer-progress-svg" viewBox="0 0 100 100">
-                    <circle id="timer-progress-circle" cx="50" cy="50" r="32" />
-                </svg>
-                <span id="timer-text">5</span>
-            </div>
-
-            <div id="home-screen" class="screen active">
-
-                <!-- Page 1: Existing Games (8) - 4+4 layout -->
-                <div class="home-page active" data-page="0">
-                    <div class="game-cards">
-                        <div class="card-row">
-                            <div class="game-card" data-game="11"
-                                style="background-image: url('assets/Ally1_brushing teeth/Ally1_card.png');"></div>
-                            <div class="game-card" data-game="12"
-                                style="background-image: url('assets/Ally2_cake/Ally2_card.png');"></div>
-                            <div class="game-card" data-game="13"
-                                style="background-image: url('assets/Ally3_princess/Ally3_card.png');"></div>
-                            <div class="game-card" data-game="28"
-                                style="background-image: url('assets/Ally8_donut/Ally8_donut_card 01.png');"></div>
-                            <div class="game-card" data-game="29"
-                                style="background-image: url('assets/Ally9_desert/Ally9_desert_card.png');"></div>
-                        </div>
-                        <div class="card-row">
-                            <div class="game-card" data-game="14"
-                                style="background-image: url('assets/Ally4_flower/Ally4_card.png');"></div>
-                            <div class="game-card" data-game="15"
-                                style="background-image: url('assets/Ally5_grape/Ally5_card.png');"></div>
-                            <div class="game-card" data-game="16"
-                                style="background-image: url('assets/Ally6_maze/Ally6_maze_card.png');"></div>
-                            <div class="game-card" data-game="17"
-                                style="background-image: url('assets/Ally7_carrot/Ally7_carrot_card.png');"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Game Screen -->
-            <div id="game-screen" class="screen">
-                <div id="game-container"></div>
-            </div>
-
-            <!-- Result Screen (legacy - kept for non-Ally games) -->
-            <div id="result-screen" class="screen">
-                <div class="result-icon" id="result-icon"></div>
-                <div class="result-buttons">
-                    <button class="result-btn result-btn-home" id="btn-home"></button>
-                    <button class="result-btn result-btn-retry" id="btn-retry"></button>
-                </div>
-            </div>
-
-            <!-- Mobile Result Overlay (dim + buttons over game canvas, no result card) -->
-            <div id="mob-result-overlay" class="result-overlay">
-                <div class="result-overlay-buttons">
-                    <button class="result-btn result-btn-home" id="overlay-btn-home"></button>
-                    <button class="result-btn result-btn-retry" id="overlay-btn-retry"></button>
                 </div>
             </div>
         </div>

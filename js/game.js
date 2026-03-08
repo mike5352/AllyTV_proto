@@ -91,7 +91,7 @@ class GameController {
             26: { text: "동물 친구를 집에 데려다줘!", bg: "" },
             27: { text: "별을 세어봐!", bg: "" },
             28: { text: "같은 모양 간식 찾기!", bg: "" },
-            29: { text: "오아시스에 비춰진 틀린 그림 찾기!", bg: "" }
+            29: { text: "오아시스 물에 비친 다른 곳을 세 군데 찾아보기!", bg: "" }
         };
 
         // Canvas contexts
@@ -117,15 +117,33 @@ class GameController {
     }
 
     resizeCanvases() {
+        const scaleWrapper = document.getElementById('scale-wrapper');
+        const app = document.getElementById('app');
+
+        if (scaleWrapper && app) {
+            // Find maximum scale to fit within #app, keeping aspect ratio
+            const availableW = app.clientWidth - 40; // padding
+            const availableH = app.clientHeight - 40; // padding
+
+            // Fixed design size of scale-wrapper is 1000px width and 880px height
+            const scaleW = availableW / 1000;
+            const scaleH = availableH / 880;
+            const scale = Math.min(scaleW, scaleH);
+
+            scaleWrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
         const phoneFrame = document.getElementById('phone-frame');
         const tvFrame = document.getElementById('tv-frame');
 
-        if (phoneFrame) {
+        // Since the frames have fixed CSS dimensions (Phone: 800x400, TV: 1000x450), 
+        // we lock canvas size to their client dimensions once.
+        if (phoneFrame && this.gameCanvas.width !== phoneFrame.clientWidth) {
             this.gameCanvas.width = phoneFrame.clientWidth;
             this.gameCanvas.height = phoneFrame.clientHeight;
         }
 
-        if (tvFrame) {
+        if (tvFrame && this.tvCanvas.width !== tvFrame.clientWidth) {
             this.tvCanvas.width = tvFrame.clientWidth;
             this.tvCanvas.height = tvFrame.clientHeight;
         }

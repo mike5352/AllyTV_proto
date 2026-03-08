@@ -1,6 +1,6 @@
 /**
- * Game 29: 오아시스에 비춰진 틀린 그림 찾기! (Find the differences reflected in the oasis!)
- * - Find 3 differences between top half and bottom half on screen.
+ * Game 29: 오아시스 물에 비친 다른 곳을 세 군데 찾아보기! (Find three different places reflected in the oasis water!)
+ * - Spot the difference in reflection top half and bottom half on screen.
  */
 class Game29Desert {
     constructor() {
